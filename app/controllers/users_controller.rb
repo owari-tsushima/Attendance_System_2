@@ -6,7 +6,12 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
 
   def index
-    @users = User.paginate(page: params[:page])
+    if current_user.admin?
+      @users = User.paginate(page: params[:page])
+    else
+      flash[:danger] = "アクセス権限がありません。"
+      redirect_to root_url
+    end
   end
 
   def show
