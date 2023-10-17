@@ -6,12 +6,29 @@ class UsersController < ApplicationController
   before_action :set_one_month, only: :show
 
   def index
-    if current_user.admin?
+    if params[:query].present?
+      @users = User.where('name LIKE ?', "%#{params[:query]}%").paginate(page: params[:page])
+    else
       @users = User.paginate(page: params[:page])
+    end
+  end
+
+  def search
+    if current_user.admin?
+      if params[:q].present?
+        search_term = "%#{params[:q]}%"
+        @users = User.where("name LIKE ?", search_term).paginate(page: params[:page])
+      else
+        flash.now[:danger] = "検索キーワードを入力してください。"
+        render 'index'
+        return
+      end
     else
       flash[:danger] = "アクセス権限がありません。"
       redirect_to root_url
+      return
     end
+    render 'index'
   end
 
   def show

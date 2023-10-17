@@ -1,19 +1,21 @@
-<% provide(:title, 'All Users') %>
-<h1><%= params[:query].present? ? '検索結果' : '全てのユーザー' %></h1>
+<% provide(:title, '検索結果') %>
+<h1>検索結果</h1>
 
 <div class="container">
   <div class="row">
     <div class="col-md-offset-8 col-md-4 text-right">
-      <%= form_tag(users_path, method: :get) do %>
-        <%= text_field_tag(:query, params[:query], placeholder: 'ユーザーを検索') %>
-        <%= submit_tag('検索') %>
+      <%= form_tag search_users_path, method: :get, class: "form-inline" do %>
+        <div class="form-group">
+          <%= text_field_tag :q, params[:q], class: "form-control", placeholder: "キーワードを入力…" %>
+        </div>
+        <%= submit_tag "検索", class: "btn btn-default" %>
       <% end %>
     </div>
   </div>
 </div>
 
 <div class="col-md-10 col-md-offset-1">
-  <%= will_paginate %>
+  <%= will_paginate @users %>
   <table class="table table-condensed table-hover" id="table-users">
     <thead>
       <tr>
@@ -51,7 +53,7 @@
       </tr>
     <% end %>
   </table>
-  <%= will_paginate %>
+  <%= will_paginate @users %>
 </div>
 
 <!--モーダルウインドウ表示-->
